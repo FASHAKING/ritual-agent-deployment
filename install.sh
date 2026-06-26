@@ -34,11 +34,25 @@ cd "$DEST"
 RUNNER="bash run.sh"
 command -v pwsh >/dev/null 2>&1 && [ "$(uname -s 2>/dev/null || echo Windows)" = "Windows" ] && RUNNER="pwsh run.ps1"
 
+# Prompt for an agent address. Pass "required" to keep asking until one is given.
+read_addr() {
+  local prompt="$1" mode="${2:-}"
+  while :; do
+    ask "$prompt"
+    read -r ADDR < /dev/tty
+    [ -n "$ADDR" ] && break
+    [ "$mode" != "required" ] && break
+    say "an agent address is required for this action"
+  done
+}
+
 printf '\n  %sRitual Sovereign Agent%s\n' "$BOLD" "$RESET"
 say "1) Deploy an agent"
 say "2) Check agent status"
 say "3) Stop an agent"
-ask "choose [1-3]:"
+say "4) Top up an agent (add funds, re-arms if stopped)"
+say "5) Restart an agent (re-arm a stopped one)"
+ask "choose [1-5]:"
 read -r CHOICE < /dev/tty
 echo
 
@@ -56,14 +70,22 @@ case "$CHOICE" in
     exec $RUNNER deploy
     ;;
   2)
-    ask "agent address (leave blank for the default):"
-    read -r ADDR < /dev/tty
+    read_addr "agent address (leave blank to list all your agents):"
     exec $RUNNER status ${ADDR:+"$ADDR"}
     ;;
   3)
-    ask "agent address (leave blank for the default):"
-    read -r ADDR < /dev/tty
+    read_addr "agent address to stop (leave blank for the default):"
     exec $RUNNER stop ${ADDR:+"$ADDR"}
+    ;;
+  4)
+    read_addr "agent address to top up:" required
+    ask "amount in wei (leave blank for the DEPOSIT_WEI default):"
+    read -r WEI < /dev/tty
+    exec $RUNNER topup "$ADDR" ${WEI:+"$WEI"}
+    ;;
+  5)
+    read_addr "agent address to restart:" required
+    exec $RUNNER restart "$ADDR"
     ;;
   *)
     echo "  invalid choice" >&2
