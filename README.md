@@ -34,14 +34,26 @@ You need three things. The script installs everything else for you (foundry, uv,
 
 <h2 align="center">🏃 Quick Start 🏃</h2>
 
-### Step 1 - Get the code
+### One-liner
+
+Paste this into a terminal (macOS, Linux, or Git Bash/WSL on Windows). It clones the repo to `~/.ritual-agent-deployment`, sets up `.env` on first run, then shows a menu - pick `1` to deploy, `2` to check status, or `3` to stop an agent:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/FASHAKING/ritual-agent-deployment/main/install.sh | bash
+```
+
+It will only ask you for what that choice needs (e.g. the task prompt when deploying, or an agent address for status/stop). The first deploy also asks for your wallet's private key, same as below.
+
+### Step-by-step (manual)
+
+#### Step 1 - Get the code
 
 ```bash
 git clone https://github.com/zunmax/ritual-agent-deployment.git
 cd ritual-agent-deployment
 ```
 
-### Step 2 - Configure
+#### Step 2 - Configure
 
 ```bash
 cp .env.example .env
@@ -49,7 +61,7 @@ cp .env.example .env
 
 There is nothing you must edit - the defaults work. `PROMPT` is the task your agent runs on every wake, so change it to anything you like.
 
-### Step 3 - Deploy
+#### Step 3 - Deploy
 
 On Windows (PowerShell):
 
@@ -115,4 +127,4 @@ Your private key is never written to `.env`; it lives encrypted in `~/.foundry/k
 
 This tool signs transactions with a key it stores in an encrypted keystore under `~/.foundry/keystores` - use a testnet burner wallet, never one with real funds. The deposit you lock funds the agent's scheduled runs and is spent over time - it is not recoverable on a whim. This is testnet software, provided as-is, without warranty, and has not been audited. Use at your own risk.
 
-Released under the **MIT License**. Built by [Zun](https://x.com/Zun2025).
+Released under the **MIT License**. Originally built by [Zun](https://x.com/Zun2025), with revisions by [FASHAKING](https://github.com/FASHAKING).
